@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Todo</title>
+    <script src="./src/theme-boot.js"></script>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <header class="app-header" role="banner">
+      <h1 class="app-title" id="app-name">Todo</h1>
+      <div class="header-actions">
+        <div class="theme-control">
+          <label for="theme-select">Theme</label>
+          <select id="theme-select" name="theme">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="system">System</option>
+          </select>
+        </div>
+        <button type="button" class="primary" id="add-task">Add task</button>
+      </div>
+    </header>
+    <nav class="app-nav" aria-labelledby="nav-heading">
+      <h2 id="nav-heading" class="visually-hidden">Projects and filters</h2>
+      <p>Projects and filters will appear here.</p>
+    </nav>
+    <main class="app-main" aria-labelledby="app-name">
+      <p class="placeholder">Add your first task.</p>
+    </main>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
