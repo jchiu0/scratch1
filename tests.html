@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recipe Collector tests</title>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: 24px auto; color: #1f1a16; }
+    .pass { color: #0f5c4c; }
+    .fail { color: #8a1f1f; }
+    li { margin: 4px 0; }
+  </style>
+</head>
+<body>
+  <h1>Recipe Collector tests</h1>
+  <p id="summary">Running…</p>
+  <ul id="results"></ul>
+  <p><a href="index.html">Back to app</a></p>
+  <script src="js/model.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/router.js"></script>
+  <script src="tests/tests.js"></script>
+  <script>
+    (function () {
+      var results = runRecipeTests();
+      var list = document.getElementById("results");
+      var failed = 0;
+      results.forEach(function (r) {
+        var li = document.createElement("li");
+        li.className = r.ok ? "pass" : "fail";
+        li.textContent = (r.ok ? "PASS" : "FAIL") + "  " + r.name + (r.ok ? "" : " — " + r.detail);
+        list.appendChild(li);
+        if (!r.ok) failed += 1;
+      });
+      document.getElementById("summary").textContent =
+        (results.length - failed) + " passed, " + failed + " failed, " + results.length + " total";
+      document.title = failed ? "Tests failed" : "Tests passed";
+    })();
+  </script>
+</body>
+</html>
