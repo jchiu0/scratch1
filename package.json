@@ -1,0 +1,9 @@
+{
+  "name": "recipe-collector",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Simple web app to collect food recipes",
+  "scripts": {
+    "test": "node tests/run.js"
+  }
+}

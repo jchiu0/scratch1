@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Recipes · Recipe Collector</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="app-header-inner">
+        <a class="brand" href="#/">Recipe Collector</a>
+        <nav class="header-actions" aria-label="Primary">
+          <a class="btn btn-ghost" href="#/">Collection</a>
+          <a class="btn btn-primary" href="#/recipes/new">New recipe</a>
+        </nav>
+      </div>
+    </header>
+    <main id="app"></main>
+    <div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
+    <dialog id="confirm-dialog" aria-labelledby="confirm-title">
+      <h2 id="confirm-title">Please confirm</h2>
+      <p id="confirm-body"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn" id="confirm-cancel">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirm-ok">Confirm</button>
+      </div>
+    </dialog>
+    <script src="js/model.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
