@@ -1,0 +1,125 @@
+{
+  "subtasks": [
+    {
+      "id": "S1",
+      "title": "Domain model and pure mutations",
+      "description": "Implement project/task/settings types and pure functions for create, update, delete, tag normalization (trim, case-insensitive unique, max 10), title/name validation, default Inbox when the last project is removed, completedAt on toggle, and injectable-clock overdue/due-today helpers. No UI or storage yet.",
+      "dependsOn": [],
+      "verification": [
+        "Creating a title-only task yields priority none, dueDate null, tags [], completed false.",
+        "Completing sets completedAt; uncompleting clears it.",
+        "Adding tags work and Work stores a single tag.",
+        "Deleting the last project recreates Inbox.",
+        "Overdue helper with a fixed yesterday date returns overdue only when incomplete."
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "localStorage persistence layer",
+      "description": "Serialize and deserialize a namespaced payload (todo-app:v1) with version, projects, tasks, and settings. Default missing fields, recover from invalid JSON/schema without throwing, write after mutations (debounce <= 300ms), and ignore or merge cross-tab storage events without corrupting state.",
+      "dependsOn": ["S1"],
+      "verification": [
+        "Round-trip of sample projects and tasks restores fields including order.",
+        "Corrupt JSON loads default Inbox state without throwing.",
+        "Missing optional fields get documented defaults.",
+        "QuotaExceededError is catchable by the caller rather than crashing."
+      ]
+    },
+    {
+      "id": "S3",
+      "title": "App shell, landmarks, and theme",
+      "description": "Add index.html shell with one h1, banner/navigation/main landmarks, header (app name, theme control, add-task), and CSS variables for light/dark. Theme supports light, dark, and system; persist choice; apply before or with first paint to avoid a light flash. Respect prefers-reduced-motion.",
+      "dependsOn": ["S2"],
+      "verification": [
+        "Selecting Dark, reloading, shows Dark with no wrong-theme flash.",
+        "System follows prefers-color-scheme when that option is selected.",
+        "Primary text, borders, and controls remain visible in both themes.",
+        "prefers-reduced-motion disables CSS transitions."
+      ]
+    },
+    {
+      "id": "S4",
+      "title": "Projects sidebar CRUD",
+      "description": "UI to list, create, rename, delete, and select projects or All projects. Confirm before delete (removes that project's tasks). Reject case-insensitive duplicate names with an inline error. Persist activeProjectId. Desktop sidebar; mobile disclosure/drawer/tabs.",
+      "dependsOn": ["S3"],
+      "verification": [
+        "Empty storage first load shows selected Inbox.",
+        "Confirmed delete removes the project's tasks and selects another project or new Inbox.",
+        "Duplicate name (different case) shows an inline error and does not create.",
+        "Active project is restored after reload."
+      ]
+    },
+    {
+      "id": "S5",
+      "title": "Task create, edit, complete, delete",
+      "description": "Add and edit tasks with title, notes, project, priority, due date, and tags (Enter/comma commit). Checkbox toggles complete. Empty title cannot save (invalid + focus). Delete uses confirm dialog or undo toast within 5s. Live region announces add/delete/complete. Checkbox accessible name includes title.",
+      "dependsOn": ["S4"],
+      "verification": [
+        "Title-only create appears in the list with default fields.",
+        "Empty title save is blocked and the title field is focused.",
+        "Complete then reload keeps completed true and completedAt.",
+        "Delete confirm or 5s undo removes the task; aria-live announces the change."
+      ]
+    },
+    {
+      "id": "S6",
+      "title": "Priority, due date, and tag presentation",
+      "description": "Show priority as text-equivalent badge (not color-only). Format due dates locally; mark incomplete past due as Overdue and today as Due today; never overdue when completed. Tag chips on rows; used-tag list; clicking a tag applies that tag filter. Clearing due date stores null.",
+      "dependsOn": ["S5"],
+      "verification": [
+        "High incomplete tasks have a non-color cue plus visible High text.",
+        "Incomplete task due yesterday shows Overdue; completing removes it.",
+        "Clearing due date removes labels and persists null.",
+        "Clicking tag home filters to tasks that include home."
+      ]
+    },
+    {
+      "id": "S7",
+      "title": "Filtering, search, and empty states",
+      "description": "AND filters for project, status, priority subset, tags (every selected), due bucket, and case-insensitive search on title/notes/tags. Visible active-filter chips, one-click clear all, debounce search >=150ms. Empty first-visit hint and no-match empty state with clear action. First-visit Inbox copy: Add your first task.",
+      "dependsOn": ["S6"],
+      "verification": [
+        "Status=active AND Priority=high among mixed sample tasks shows only the active-high task.",
+        "Query milk matches title Buy milk and a milk tag.",
+        "Clear filters restores the current project list.",
+        "No matches shows empty copy and a working clear-filters control."
+      ]
+    },
+    {
+      "id": "S8",
+      "title": "Manual drag-and-drop and keyboard reorder",
+      "description": "Pointer drag reorders visible tasks and persists order. Ignore drag when sort is not manual. Each row has Move up/down (or equivalent) that swaps with the previous/next visible task. Hidden tasks keep stored order. Touch targets for move/complete/delete/add >= 40x40 CSS px.",
+      "dependsOn": ["S7"],
+      "verification": [
+        "Dragging A above B keeps A above B after drop and reload.",
+        "Keyboard Move up swaps with the previous visible task.",
+        "Filtering or completing does not scramble hidden tasks' order values.",
+        "Drag is ignored when sort mode is not manual."
+      ]
+    },
+    {
+      "id": "S9",
+      "title": "Responsive layout and accessibility polish",
+      "description": "Desktop >=768px sidebar + list; 320px usable with no overlap or horizontal scroll; titles wrap at 768/1280. Visible focus rings, labeled fields, dialog focus trap/Escape/restore, WCAG 2.2 AA contrast both themes, QuotaExceededError banner without wiping UI. Keyboard-only path: create, complete, filter by project, delete.",
+      "dependsOn": ["S8"],
+      "verification": [
+        "320px: primary actions reachable, no overlapping controls.",
+        "768px+: sidebar visible; task titles wrap.",
+        "Keyboard-only can create, complete, filter by project, and delete.",
+        "QuotaExceededError shows a non-blocking banner and keeps on-screen data."
+      ]
+    },
+    {
+      "id": "S10",
+      "title": "Automated tests and README",
+      "description": "Documented npm test (or equivalent) with unit coverage for mutations, filters, reorder, persistence round-trip, overdue clock, and tags; UI/e2e for add+reload, complete, filter clear, theme persist, and keyboard add or complete. README explains open/build and test commands. No remote server required.",
+      "dependsOn": ["S9"],
+      "verification": [
+        "npm test (or documented command) passes locally without a remote server.",
+        "Unit suite includes filter combinations, order updates, serialize round-trip, injectable-clock due helpers, and tag uniqueness.",
+        "UI suite covers add+rehydrate, toggle complete, filter clear, theme persist, and a keyboard path.",
+        "README documents how to open or build the app and how to run tests."
+      ]
+    }
+  ]
+}
